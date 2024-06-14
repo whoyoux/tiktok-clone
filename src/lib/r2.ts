@@ -1,8 +1,7 @@
 "server-only";
 
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 if (
 	!process.env.R2_ENDPOINT ||
@@ -32,7 +31,7 @@ type ReturnUploadImage =
 			success: false;
 			error: string;
 	  };
-export const UploadImage = async (
+export const UploadVideo = async (
 	file: File,
 	userId: string,
 ): Promise<ReturnUploadImage> => {
@@ -41,7 +40,7 @@ export const UploadImage = async (
 			client: S3,
 			params: {
 				Bucket: process.env.R2_BUCKET_NAME,
-				Key: `images/${userId}/${file.name}`,
+				Key: `videos/${userId}/${file.name}`,
 				Body: file.stream(),
 				ACL: "public-read",
 				ContentType: file.type,
@@ -58,7 +57,7 @@ export const UploadImage = async (
 		if (!res.Location || !res.Key) {
 			return {
 				success: false,
-				error: "Failed to upload image",
+				error: "Failed to upload a file.",
 			};
 		}
 
@@ -71,7 +70,7 @@ export const UploadImage = async (
 		console.error(err);
 		return {
 			success: false,
-			error: "Failed to upload image",
+			error: "Failed to upload a file.",
 		};
 	}
 };

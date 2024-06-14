@@ -1,6 +1,6 @@
 import { Menu, Search } from "lucide-react";
 import { ThemeDropdown } from "./theme-dropdown";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Input } from "./ui/input";
 
 import {
@@ -34,12 +34,14 @@ const Header = async () => {
 				<h1 className="font-semibold">Tiktok Clone</h1>
 			</Link>
 			{/* <SearchInput /> */}
-			<div className="flex items-center gap-2">
-				<Link href="/upload">
-					<Button>Upload</Button>
-				</Link>
+			<div className="flex items-center gap-4">
+				{session?.user && (
+					<Link href="/upload" className={cn(buttonVariants())}>
+						Upload
+					</Link>
+				)}
 				{session?.user ? <UserDropdown user={session.user} /> : <SignIn />}
-				<ThemeDropdown />
+				{/* <ThemeDropdown /> */}
 			</div>
 		</header>
 	);
@@ -109,6 +111,7 @@ const UserDropdown = ({ user }: { user: Session["user"] }) => {
 };
 
 import { signIn } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 import type { Session, User } from "next-auth";
 import Link from "next/link";
 
@@ -121,7 +124,7 @@ function SignIn() {
 			}}
 		>
 			<Button type="submit" className="w-full">
-				Signin with Discord
+				Sign in
 			</Button>
 		</form>
 	);
@@ -133,7 +136,9 @@ function SignOut({ children }: { children?: React.ReactNode }) {
 			className="w-full"
 			action={async () => {
 				"use server";
-				await signOut();
+				await signOut({
+					redirectTo: "/",
+				});
 			}}
 		>
 			{children}

@@ -1,5 +1,5 @@
 "use client";
-import { createPost } from "@/actions/posts";
+import { createPost } from "@/actions/video";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,12 +17,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CreatePostSchemaFormData } from "@/schemas/posts";
-import { useState } from "react";
+import { CreatePostSchemaFormData } from "@/schemas/videos";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
+import Spinner from "./ui/spinner";
 
-const CreatePost = () => {
-	const [image, setImage] = useState<File | null>(null);
+const CreateVideoForm = () => {
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const [isUploading, setIsUploading] = useState(false);
 
 	const form = useForm<z.infer<typeof CreatePostSchemaFormData>>({
 		resolver: zodResolver(CreatePostSchemaFormData),
@@ -33,12 +35,15 @@ const CreatePost = () => {
 	});
 
 	async function onSubmit(values: z.infer<typeof CreatePostSchemaFormData>) {
+		setIsUploading(true);
 		const formData = new FormData();
 		formData.append("title", values.title);
 		formData.append("description", values.description);
-		formData.append("image", values.image);
+		formData.append("video", values.video);
 
 		const { data, serverError, validationErrors } = await createPost(formData);
+
+		setIsUploading(false);
 
 		if (serverError) {
 			toast.error(serverError);
@@ -47,6 +52,7 @@ const CreatePost = () => {
 		if (data) {
 			toast.success(data.message);
 			form.reset();
+			if (fileInputRef.current) fileInputRef.current.value = null ?? "";
 		}
 
 		console.log(data);
@@ -54,7 +60,7 @@ const CreatePost = () => {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-				<h2 className="text-2xl font-bold">Add new post</h2>
+				<h2 className="text-2xl font-bold">Upload new video</h2>
 				<FormField
 					control={form.control}
 					name="title"
@@ -62,11 +68,9 @@ const CreatePost = () => {
 						<FormItem>
 							<FormLabel>Title</FormLabel>
 							<FormControl>
-								<Input placeholder="VW Golf 2024" {...field} />
+								<Input placeholder="skibidi toilet" {...field} />
 							</FormControl>
-							<FormDescription>
-								A short title for your advertisement.
-							</FormDescription>
+							<FormDescription>A short title for your clip.</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}
@@ -79,13 +83,11 @@ const CreatePost = () => {
 							<FormLabel>Description</FormLabel>
 							<FormControl>
 								<Textarea
-									placeholder="Volkswagen Golf 2.0 diesel from 2024..."
+									placeholder="skibidi toilet yes yes skibidi iii"
 									{...field}
 								/>
 							</FormControl>
-							<FormDescription>
-								A detailed description of the item you are selling.
-							</FormDescription>
+							<FormDescription>A description of your video.</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}
@@ -93,10 +95,10 @@ const CreatePost = () => {
 
 				<FormField
 					control={form.control}
-					name="image"
+					name="video"
 					render={({ field: { value, onChange, ...fieldProps } }) => (
 						<FormItem>
-							<FormLabel>Image</FormLabel>
+							<FormLabel>Video</FormLabel>
 							<FormControl>
 								<Input
 									{...fieldProps}
@@ -104,19 +106,29 @@ const CreatePost = () => {
 									type="file"
 									accept="image/*"
 									onChange={(event) => onChange(event.target.files?.[0])}
+									ref={fileInputRef}
 								/>
 							</FormControl>
 
-							<FormDescription>You can add more images later.</FormDescription>
+							<FormDescription>
+								Up to 25MB. Recommended size is 720x1280px
+							</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
 
-				<Button type="submit">Submit</Button>
+				<Button
+					type="submit"
+					disabled={isUploading}
+					className="flex items-center gap-2"
+				>
+					{isUploading && <Spinner />}
+					Submit
+				</Button>
 			</form>
 		</Form>
 	);
 };
 
-export default CreatePost;
+export default CreateVideoForm;

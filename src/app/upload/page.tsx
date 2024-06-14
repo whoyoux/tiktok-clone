@@ -1,11 +1,15 @@
-import CreatePost from "@/components/create-post";
+import CreateVideo from "@/components/create-video-form";
+import { auth } from "@/lib/auth";
+import { notFound } from "next/navigation";
 
-const CreatePostPage = () => {
+const CreateVideoPage = async () => {
+	const session = await auth();
+	if (!session?.user) return notFound();
 	return (
 		<main className="max-w-screen-md mx-auto">
-			<CreatePost />
+			<CreateVideo />
 		</main>
 	);
 };
 
-export default CreatePostPage;
+export default CreateVideoPage;

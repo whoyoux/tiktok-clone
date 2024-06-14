@@ -1,28 +1,28 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { UploadImage } from "@/lib/r2";
+import { UploadVideo } from "@/lib/r2";
 import { authAction } from "@/lib/safe-action";
-import { CreatePostSchemaFormData } from "@/schemas/posts";
+import { CreatePostSchemaFormData } from "@/schemas/videos";
 import { redirect } from "next/navigation";
 import sharp from "sharp";
 
 export const createPost = authAction(
 	CreatePostSchemaFormData,
-	async ({ title, description, image }, { session }) => {
-		const compressedImageBuffer = await sharp(await image.arrayBuffer())
-			.webp({ quality: 100 })
-			.toBuffer();
+	async ({ title, description, video }, { session }) => {
+		// const compressedImageBuffer = await sharp(await image.arrayBuffer())
+		// 	.webp({ quality: 100 })
+		// 	.toBuffer();
 
-		const compressedImageBlob = new Blob([compressedImageBuffer]);
+		// const compressedImageBlob = new Blob([compressedImageBuffer]);
 
-		const compressedImage = new File(
-			[compressedImageBlob],
-			`post-img-${image.name.split(".")[0]}-${Date.now()}.webp`,
-			{ type: "image/webp" },
-		);
+		// const compressedImage = new File(
+		// 	[compressedImageBlob],
+		// 	`post-img-${image.name.split(".")[0]}-${Date.now()}.webp`,
+		// 	{ type: "image/webp" },
+		// );
 
-		const uploadedImage = await UploadImage(compressedImage, session.user.id);
+		const uploadedImage = await UploadVideo(video, session.user.id);
 
 		if (!uploadedImage.success) {
 			console.error(uploadedImage.error);
@@ -33,7 +33,7 @@ export const createPost = authAction(
 			data: {
 				title,
 				description,
-				mainImage: {
+				video: {
 					create: {
 						url: uploadedImage.url,
 						key: uploadedImage.key,
@@ -56,7 +56,5 @@ export const createPost = authAction(
 			success: true,
 			message: "Post created successfully.",
 		};
-
-		// redirect(`/post/${post.id}`);
 	},
 );
