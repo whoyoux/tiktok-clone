@@ -74,7 +74,3 @@ export const UploadVideo = async (
 		};
 	}
 };
-
-export const GetImageURL = (key?: string) => {
-	return `https://pub-cb85655592d24665bc6f3fb45e2c1ef7.r2.dev/${key}`;
-};
