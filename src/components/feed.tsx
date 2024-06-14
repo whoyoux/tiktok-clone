@@ -53,6 +53,8 @@ const FeedCard = ({ post }: { post: PostWithVideoAndUser }) => {
 					className="rounded-lg w-full aspect-[9/14] object-cover bg-muted"
 					controls
 					ref={videoRef}
+					webkit-playsinline
+					playsInline
 				/>
 			</div>
 
