@@ -1,10 +1,8 @@
 import CreateVideo from "@/components/create-video-form";
-import { auth } from "@/lib/auth";
-import { notFound } from "next/navigation";
+import { ensureAuth } from "@/lib/utils";
 
 const CreateVideoPage = async () => {
-	const session = await auth();
-	if (!session?.user) return notFound();
+	await ensureAuth();
 	return (
 		<main className="max-w-screen-md mx-auto">
 			<CreateVideo />

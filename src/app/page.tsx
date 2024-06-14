@@ -12,6 +12,9 @@ export default async function Home() {
 				},
 			},
 		},
+		orderBy: {
+			createdAt: "desc",
+		},
 	});
 	return (
 		<main className="">

@@ -19,7 +19,7 @@ type PostWithVideoAndUser = Prisma.PostGetPayload<{
 
 const Feed = ({ posts }: { posts: PostWithVideoAndUser[] }) => {
 	return (
-		<div className="feed-card flex flex-col gap-4 divide-y px-4 snap-y overflow-y-auto snap-mandatory h-[calc(100dvh-120px)] ">
+		<div className="flex flex-col items-center gap-4 snap-y overflow-y-auto snap-mandatory h-[calc(100dvh-120px)] no-scrollbar">
 			{posts.map((post) => (
 				<FeedCard key={post.id} post={post} />
 			))}
@@ -28,7 +28,9 @@ const Feed = ({ posts }: { posts: PostWithVideoAndUser[] }) => {
 };
 
 const FeedCard = ({ post }: { post: PostWithVideoAndUser }) => {
-	const { ref, inView } = useInView();
+	const { ref, inView } = useInView({
+		threshold: 0.7,
+	});
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	useEffect(() => {
@@ -41,20 +43,20 @@ const FeedCard = ({ post }: { post: PostWithVideoAndUser }) => {
 
 	return (
 		<div
-			className="flex flex-col justify-between gap-2 pt-4 snap-start max-w-screen-sm mx-auto"
+			className="flex flex-col justify-between gap-2 pt-4 snap-start max-w-screen-sm"
 			ref={ref}
 		>
-			<div className="relative w-full aspect-[9/16]">
+			<div className="w-full">
 				{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 				<video
 					src={GetVideoURL(post.video.key)}
-					className="rounded-lg object-contain"
+					className="rounded-lg w-full aspect-[9/14] object-cover bg-muted"
 					controls
 					ref={videoRef}
 				/>
 			</div>
 
-			<div className="flex gap-2">
+			<div className="flex gap-2 w-full">
 				<div>
 					<img
 						src={post?.user?.image ?? ""}
