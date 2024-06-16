@@ -31,7 +31,7 @@ const Header = async () => {
 	return (
 		<header className="w-full px-4 md:px-6 py-6 flex items-center justify-between border-b mb-6 gap-6">
 			<Link href="/">
-				<h1 className="font-semibold">Tiktok Clone</h1>
+				<h1 className="font-semibold">Clips</h1>
 			</Link>
 			{/* <SearchInput /> */}
 			<div className="flex items-center gap-4">
